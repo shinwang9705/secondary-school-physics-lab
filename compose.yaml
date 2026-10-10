@@ -1,0 +1,13 @@
+services:
+  physics-lab:
+    build: .
+    ports:
+      - "127.0.0.1:4173:4173"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+    environment:
+      HOST: 0.0.0.0
+      PORT: 4173
+      BACKUP_INTERVAL_HOURS: 24
+

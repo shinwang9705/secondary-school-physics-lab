@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>凸透镜成像规律｜初中物理虚拟实验课</title>
+  <style>
+    :root{color-scheme:light;--bg:#f5f7fb;--paper:#fff;--ink:#193047;--muted:#506579;--line:#d7e0e8;--blue:#1766b3;--cyan:#0a8993;--amber:#aa6400;--red:#a63836;--soft:#eaf3fb}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Microsoft YaHei",sans-serif}main{max-width:1120px;margin:auto;padding:24px 18px 64px}h1{font-size:clamp(1.65rem,3vw,2.4rem);line-height:1.25;margin:0 0 6px}h2{font-size:1.3rem;margin:0 0 16px}h3{font-size:1.05rem;margin:0 0 10px}p{margin:6px 0 12px}.lead{color:var(--muted);margin-bottom:22px}.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px;margin:16px 0;box-shadow:0 3px 12px #15334d0a}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.grid .card{margin:0}.tag{display:inline-block;padding:2px 9px;border-radius:99px;background:#e5f3ef;color:#146452;font-size:.84rem;font-weight:700;margin-bottom:8px}.muted{color:var(--muted)}ul,ol{padding-left:1.5em;margin:8px 0}li{margin:5px 0}.sim-grid{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:18px}.controls{display:grid;gap:18px}.control-head{display:flex;justify-content:space-between;gap:12px;font-weight:700}.control-head output{color:var(--blue);font-variant-numeric:tabular-nums}input[type=range]{width:100%;accent-color:var(--blue);touch-action:none}select,button{font:inherit}select{width:100%;padding:8px 10px;border:1px solid #aebecd;border-radius:8px;background:#fff;color:var(--ink)}button{border:1px solid var(--blue);border-radius:9px;padding:8px 13px;background:var(--blue);color:#fff;cursor:pointer;font-weight:700}button.secondary{background:#fff;color:var(--blue)}button.danger{border-color:#bc7b77;color:#9b3030;background:#fff}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ffba4a;outline-offset:2px}.actions{display:flex;flex-wrap:wrap;gap:8px}.plot-wrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:linear-gradient(#fff,#f8fbfe)}svg{display:block;width:100%;height:auto;min-height:260px;touch-action:none}.status{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}.metric{padding:10px 12px;border-radius:10px;background:var(--soft);min-width:0}.metric b{display:block;font-size:1.05rem}.metric small{color:var(--muted);display:block}.feedback{margin-top:12px;padding:10px 12px;border-left:4px solid var(--cyan);background:#edf7f8;border-radius:6px}.feedback.warn{border-color:var(--amber);background:#fff6e7}.feedback.error{border-color:var(--red);background:#fff0ee}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}th{background:#edf3f9;white-space:nowrap}tbody tr:hover{background:#f6faff}.analysis{padding:12px 14px;background:#f0f7fb;border-radius:10px;margin-top:12px}.formula{font-family:ui-serif,"Cambria Math",serif;background:#f0f5fa;padding:2px 6px;border-radius:5px}.exercise li{padding-bottom:9px}.exercise details{margin-top:5px;color:#275a80}.instructions{background:#f3faf7;border-left:4px solid #328164;padding:12px 16px;border-radius:6px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}@media(max-width:800px){.sim-grid,.grid{grid-template-columns:1fr}.status{grid-template-columns:1fr 1fr}.card{padding:16px}}@media(max-width:520px){main{padding:14px 10px 40px}.status{grid-template-columns:1fr}th,td{padding:8px}}
+  </style>
+</head>
+<body>
+<main>
+  <header><span class="tag">八年级物理 · 1课时（45分钟）</span><h1>探究凸透镜成像规律</h1><p class="lead">拖动物体与光屏，寻找清晰的像；记录数据，归纳物距、像距与成像性质的关系。</p></header>
+
+  <section class="card" aria-labelledby="sim-title">
+    <h2 id="sim-title">虚拟实验台</h2>
+    <div class="sim-grid">
+      <div>
+        <div class="plot-wrap"><svg id="bench" viewBox="0 0 960 390" role="img" aria-label="凸透镜光路与光屏成像示意图"></svg></div>
+        <div class="status" aria-live="polite">
+          <div class="metric"><small>物距 u</small><b id="u-value">—</b></div>
+          <div class="metric"><small>光屏距透镜 s</small><b id="s-value">—</b></div>
+          <div class="metric"><small>屏上现象</small><b id="screen-value">—</b></div>
+        </div>
+        <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+      </div>
+      <div class="controls">
+        <label><span class="control-head">焦距 f <output id="f-out">15 cm</output></span><select id="f-select" aria-label="选择凸透镜焦距"><option value="10">10 cm</option><option value="15" selected>15 cm</option><option value="20">20 cm</option></select></label>
+        <label><span class="control-head">物距 u <output id="u-out">45 cm</output></span><input id="u-range" type="range" min="8" max="75" step="1" value="45" aria-label="调整物距"></label>
+        <label><span class="control-head">光屏位置 s <output id="s-out">23 cm</output></span><input id="s-range" type="range" min="8" max="90" step="1" value="23" aria-label="调整光屏距透镜的距离"></label>
+        <div class="actions"><button id="record-btn" type="button">记录本次观察</button><button id="hint-btn" class="secondary" type="button">核对理论像距</button></div>
+        <p class="muted">也可在图中拖动“物体”和“光屏”。清晰判定允许约 1 cm 的读数误差。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="data-title">
+    <h2 id="data-title">实验记录与分析</h2>
+    <p class="muted">建议至少记录 u＞2f、u＝2f、f＜u＜2f、u＝f、u＜f 各一次；成实像时先移动光屏找清晰像。</p>
+    <div class="table-wrap"><table><thead><tr><th>序号</th><th>f / cm</th><th>u / cm</th><th>光屏 s / cm</th><th>观察结果</th><th>理论像距 v / cm</th><th>偏差 / cm</th></tr></thead><tbody id="record-body"><tr><td colspan="7" class="muted">尚无记录</td></tr></tbody></table></div>
+    <div id="analysis" class="analysis" aria-live="polite">记录后，这里会自动统计覆盖的实验情形与清晰成像的测量偏差。</div>
+    <div class="actions" style="margin-top:12px"><button id="csv-btn" class="secondary" type="button">导出 CSV</button><button id="clear-btn" class="danger" type="button">清空记录</button></div>
+  </section>
+
+  <div class="grid">
+    <section class="card"><h2>教学目标</h2><ol><li>能说出物距、像距、焦距的含义，并区分实像与虚像。</li><li>能通过调节物体、凸透镜和光屏的位置，观察并记录像的正倒、大小及能否呈现在光屏上。</li><li>能根据多组数据归纳凸透镜成像规律，并用光路与透镜公式解释现象。</li><li>养成控制变量、如实记录和用数据核查结论的习惯。</li></ol></section>
+    <section class="card"><h2>实验原理</h2><p>凸透镜使平行于主光轴的光线折射后经过另一侧焦点；通过光心的光线近似不改变方向。两条实际折射光线相交形成实像；折射光线的反向延长线相交形成虚像。</p><p><span class="formula">1/f = 1/u + 1/v</span>。这里实像的 v 取正，虚像的 v 取负。放大率的大小为 <span class="formula">|m| = |v|/u</span>。</p><p>规律：u＞2f 时倒立缩小；u＝2f 时倒立等大；f＜u＜2f 时倒立放大；u＝f 时不能在有限距离的光屏上成像；u＜f 时正立放大虚像。</p></section>
+    <section class="card"><h2>所需器材</h2><ul><li>实物实验：光具座、凸透镜、发光物体（如 LED 箭头或蜡烛）、白色光屏、刻度尺、低压电源。</li><li>虚拟实验：本页面及电脑、平板或手机浏览器；无需联网。</li></ul><h3>安全注意事项</h3><ul><li>实物实验优先使用低压 LED 光源；若使用蜡烛，固定烛台，远离纸张与头发，实验后立即熄灭。</li><li>不要用凸透镜直视太阳，也不要使聚焦的太阳光照射皮肤或易燃物。</li><li>移动光具座上的器材时轻扶镜片边缘，避免透镜掉落和划伤。</li></ul></section>
+    <section class="card"><h2>实验步骤</h2><ol><li>选择焦距 f，先使发光物体、凸透镜中心与光屏中心大致在同一高度。</li><li>把物体放在 u＞2f 的位置，移动光屏寻找最清晰的像，记录 u、s、正倒与大小。</li><li>依次改变物距至 u＝2f、f＜u＜2f，重复寻找清晰像与记录。</li><li>把物体放到 u＝f、u＜f，观察光屏上是否能接到清晰像；对 u＜f 的情形，眼睛在透镜另一侧朝物体方向观察虚像。</li><li>核对理论像距并比较记录，归纳物距变化时像距和像的大小如何变化。</li></ol></section>
+  </div>
+
+  <section class="card exercise"><h2>课堂练习</h2><ol><li>焦距为 15 cm，物体距透镜 45 cm。像距是多少？像的性质是什么？<details><summary>参考答案</summary>由 1/v＝1/15－1/45，得 v＝22.5 cm；倒立、缩小的实像。</details></li><li>将物体从 45 cm 移到 20 cm，光屏应向透镜靠近还是远离？像会怎样变化？<details><summary>参考答案</summary>远离透镜。像距由 22.5 cm 增至 60 cm；倒立实像由缩小变为放大。</details></li><li>物体距焦距为 15 cm 的透镜 10 cm，为什么光屏接不到像？<details><summary>参考答案</summary>u＜f，折射光线发散，只有反向延长线在物侧相交，形成正立放大的虚像，不能呈现在光屏上。</details></li><li>一组数据中 u＝30 cm、f＝15 cm，光屏在 s＝33 cm 时像仍不清晰。怎样调整？可能的读数偏差是多少？<details><summary>参考答案</summary>应把光屏向透镜移动到约 30 cm；原位置与理论像距相差 3 cm。</details></li></ol></section>
+
+  <section class="card"><h2>虚拟实验使用说明</h2><div class="instructions"><ol><li>用滑块或在光路图中拖动物体、光屏；先固定焦距，再改变物距。</li><li>观察光屏上的像和“屏上现象”提示。出现“清晰的倒立……实像”时，点击“记录本次观察”。</li><li>每个物距至少尝试一次；记录后可点“核对理论像距”，比较自己的光屏读数。</li><li>记录保存在当前浏览器本地；点击“导出 CSV”可用于小组讨论或提交。</li></ol></div><h3 style="margin-top:18px">教学建议</h3><ul><li><strong>导入（5 分钟）：</strong>用相机调焦或放大镜引出“屏上能否接到像”的问题，让学生先预测。</li><li><strong>探究（22 分钟）：</strong>两人一组，一人调整物距，一人移动光屏并记录。先只依据现象填写表格，再核对理论值。</li><li><strong>交流（10 分钟）：</strong>比较 u＞2f、f＜u＜2f 两类数据，让学生说出物体靠近焦点时像距和像的大小如何变化。</li><li><strong>巩固（8 分钟）：</strong>完成练习并讨论 u＜f 时“看得到像”与“光屏接不到像”并不矛盾。</li><li>虚拟图像采用理想薄透镜模型，忽略透镜厚度、球差与光源宽度。课堂上宜再用实物光具座验证，尤其关注对中、读数与清晰程度的判断。</li></ul></section>
+</main>
+<script>
+(()=>{
+  const $=id=>document.getElementById(id);
+  const els={svg:$('bench'),f:$('f-select'),u:$('u-range'),s:$('s-range'),fo:$('f-out'),uo:$('u-out'),so:$('s-out'),uv:$('u-value'),sv:$('s-value'),screen:$('screen-value'),feedback:$('feedback'),body:$('record-body'),analysis:$('analysis')};
+  const X=480,Y=190,SCALE=5,H=32,MAX_X=950;
+  const key='physics-lens-'+new URLSearchParams(location.search).get('sid');let records=[];let showHint=false;let dragging=null;
+  try{const parsed=JSON.parse(localStorage.getItem(key)||'[]');if(Array.isArray(parsed))records=parsed.filter(r=>r&&Number.isFinite(r.f)&&Number.isFinite(r.u)&&Number.isFinite(r.s)).slice(-100)}catch{}
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const fmt=v=>Number.isFinite(v)?(Math.round(v*10)/10).toFixed(1):'—';
+  const state=()=>{const f=+els.f.value,u=+els.u.value,s=+els.s.value,v=u===f?Infinity:f*u/(u-f);return{f,u,s,v,delta:Math.abs(s-v)}};
+  function classify({f,u}){if(u>2*f)return'u＞2f';if(u===2*f)return'u＝2f';if(u>f)return'f＜u＜2f';if(u===f)return'u＝f';return'u＜f'}
+  function phenomenon(st){if(st.u<st.f)return'无屏上实像（虚像）';if(st.u===st.f)return'无有限距离清晰像';if(st.delta<=1)return`清晰的倒立${st.u>2*st.f?'缩小':st.u===2*st.f?'等大':'放大'}实像`;if(st.delta<=3)return'接近清晰，继续微调';return'模糊的倒立光斑'}
+  function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+  function line(x1,y1,x2,y2,color,width=2,dash=''){return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="${width}" ${dash?`stroke-dasharray="${dash}"`:''}/>`}
+  function arrow(x,base,tip,color,stroke=5){const up=tip<base;return `<g stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">${line(x,base,x,tip,color,stroke)}<path d="M ${x-8} ${tip+(up?12:-12)} L ${x} ${tip} L ${x+8} ${tip+(up?12:-12)}" fill="none"/></g>`}
+  function draw(){
+    const st=state(),{f,u,s,v,delta}=st,ox=X-u*SCALE,sx=X+s*SCALE,tip=Y-H;
+    els.fo.value=`${f} cm`;els.uo.value=`${u} cm`;els.so.value=`${s} cm`;els.uv.textContent=`${u} cm`;els.sv.textContent=`${s} cm`;els.screen.textContent=phenomenon(st);
+    let message='',feedbackClass='feedback';
+    if(u<f){message=`u＜f：透过透镜可看到正立、放大的虚像；移动光屏也接不到清晰像。`;feedbackClass+=' warn'}
+    else if(u===f){message='u＝f：折射光近似平行，清晰的像位于无限远处。';feedbackClass+=' warn'}
+    else if(delta<=1){message=`已经对焦。像${u>2*f?'缩小':u===2*f?'等大':'放大'}，倒立，可在光屏上承接。`;}
+    else{message=`继续移动光屏寻找清晰像。${s<v?'试着向远离透镜方向移动。':'试着向靠近透镜方向移动。'}`;feedbackClass+=' warn'}
+    if(showHint){message+=` 理论像距：${Number.isFinite(v)?`${fmt(v)} cm`:'无限远'}${u>f?`；当前偏差 ${fmt(delta)} cm。`:''}`}
+    els.feedback.className=feedbackClass;els.feedback.textContent=message;
+    let svg=`<defs><marker id="ray-tip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8" fill="#e89521"/></marker><filter id="soft"><feGaussianBlur stdDeviation="5"/></filter></defs>`;
+    svg+=`<rect width="960" height="390" fill="transparent"/>${line(22,Y,942,Y,'#8493a0',1.5)}`;
+    const fx1=X-f*SCALE,fx2=X+f*SCALE,t1=X-2*f*SCALE,t2=X+2*f*SCALE;
+    for(const [xx,label] of [[t1,'2F'],[fx1,'F'],[fx2,"F′"],[t2,"2F′"]]){svg+=`${line(xx,Y-6,xx,Y+6,'#66798a',1.5)}<text x="${xx}" y="${Y+25}" text-anchor="middle" fill="#4a6074" font-size="15">${label}</text>`}
+    svg+=`<path d="M ${X} 77 Q ${X-20} ${Y} ${X} 303 Q ${X+20} ${Y} ${X} 77 Z" fill="#dff3ff" stroke="#1766b3" stroke-width="3"/><text x="${X}" y="57" text-anchor="middle" font-size="16" fill="#1766b3">凸透镜</text>`;
+    svg+=`<rect x="${sx-6}" y="75" width="12" height="230" rx="3" fill="#dbe6ed" stroke="#586f80" stroke-width="2"/><text x="${sx}" y="332" text-anchor="middle" fill="#455b6c" font-size="15">光屏</text>`;
+    svg+=arrow(ox,Y,tip,'#157f74')+`<text x="${ox}" y="${tip-16}" text-anchor="middle" fill="#0e6861" font-size="16">物体</text>`;
+    svg+=line(ox,tip,X,tip,'#e89521',2)+line(ox,tip,X,Y,'#e89521',2);
+    const yParallel=tip+(MAX_X-X)*H/(f*SCALE),yCenter=Y+(MAX_X-X)*H/(u*SCALE);
+    svg+=line(X,tip,MAX_X,yParallel,'#e89521',2)+line(X,Y,MAX_X,yCenter,'#e89521',2);
+    if(u<f){const vx=X+v*SCALE,vy=Y+H*v/u;
+      svg+=line(X,tip,Math.max(0,vx),tip+(Math.max(0,vx)-X)*H/(f*SCALE),'#ad62ab',2,'7 5');
+      svg+=line(X,Y,Math.max(0,vx),Y+(Math.max(0,vx)-X)*H/(u*SCALE),'#ad62ab',2,'7 5');
+      if(vx>23&&vy>30&&vy<345){svg+=arrow(vx,Y,vy,'#ad62ab',4)+`<text x="${vx}" y="${vy-13}" text-anchor="middle" fill="#87498b" font-size="15">虚像</text>`}
+      else svg+=`<text x="52" y="44" fill="#87498b" font-size="15">虚像可能在画面外</text>`;
+    }else if(u>f){
+      const sharp=delta<=1,near=delta<=3;
+      const ih=clamp(H*s/u,8,155),opacity=sharp?1:near?.52:.2;
+      svg+=`<g opacity="${opacity}" ${sharp?'':'filter="url(#soft)"'}>${arrow(sx,Y,Y+ih,'#b13d42',sharp?5:8)}</g>`;
+      if(sharp)svg+=`<text x="${sx}" y="${Math.min(365,Y+ih+25)}" text-anchor="middle" fill="#a63836" font-size="15">实像</text>`;
+    }
+    svg+=`<rect data-drag="u" x="${ox-24}" y="${tip-34}" width="48" height="${Y-tip+46}" fill="transparent"/><rect data-drag="s" x="${sx-22}" y="75" width="44" height="245" fill="transparent"/>`;
+    svg+=`<text x="28" y="365" fill="#5c7183" font-size="14">黄线：实际光线　紫虚线：反向延长线　图示按薄透镜模型计算</text>`;
+    els.svg.innerHTML=svg;
+    els.svg.setAttribute('aria-label',`焦距 ${f} 厘米，物距 ${u} 厘米，光屏距透镜 ${s} 厘米。${phenomenon(st)}。`);
+  }
+  function save(){try{localStorage.setItem(key,JSON.stringify(records))}catch{}}
+  function renderRecords(){
+    if(!records.length){els.body.innerHTML='<tr><td colspan="7" class="muted">尚无记录</td></tr>';els.analysis.textContent='记录后，这里会自动统计覆盖的实验情形与清晰成像的测量偏差。';return}
+    els.body.innerHTML=records.map((r,i)=>`<tr><td>${i+1}</td><td>${r.f}</td><td>${r.u}</td><td>${r.s}</td><td>${esc(r.observation)}</td><td>${Number.isFinite(r.v)?fmt(r.v):'∞'}</td><td>${Number.isFinite(r.error)?fmt(r.error):'—'}</td></tr>`).join('');
+    const cases=[...new Set(records.map(classify))],focused=records.filter(r=>r.u>r.f&&r.error<=1),mean=focused.length?focused.reduce((sum,r)=>sum+r.error,0)/focused.length:null;
+    els.analysis.textContent=`已记录 ${records.length} 组；覆盖情形：${cases.join('、')}。${focused.length?`其中 ${focused.length} 组找到清晰实像，平均像距偏差 ${fmt(mean)} cm。`:'尚未记录到清晰实像。'}建议比较 u 增大时 v 和像的大小怎样变化。`;
+  }
+  function hideHint(){showHint=false;$('hint-btn').textContent='核对理论像距'}
+  els.f.addEventListener('change',()=>{hideHint();draw()});for(const el of [els.u,els.s])el.addEventListener('input',()=>{hideHint();draw()});
+  $('hint-btn').addEventListener('click',()=>{showHint=!showHint;$('hint-btn').textContent=showHint?'隐藏理论像距':'核对理论像距';draw()});
+  $('record-btn').addEventListener('click',()=>{const st=state();records.push({f:st.f,u:st.u,s:st.s,v:st.v,error:st.u>st.f?st.delta:null,observation:phenomenon(st)});if(records.length>100)records.shift();save();renderRecords()});
+  $('clear-btn').addEventListener('click',()=>{if(!records.length)return;if(confirm('确定清空当前浏览器保存的全部实验记录吗？')){records=[];save();renderRecords()}});
+  $('csv-btn').addEventListener('click',()=>{if(!records.length){alert('请先记录至少一组观察。');return}const header=['序号','焦距f(cm)','物距u(cm)','光屏距s(cm)','观察结果','理论像距v(cm)','偏差(cm)'];const lines=[header,...records.map((r,i)=>[i+1,r.f,r.u,r.s,r.observation,Number.isFinite(r.v)?fmt(r.v):'无限远',Number.isFinite(r.error)?fmt(r.error):''])];const csv='\ufeff'+lines.map(row=>row.map(value=>'"'+String(value).replaceAll('"','""')+'"').join(',')).join('\r\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='凸透镜成像实验记录.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
+  function pointerCm(e){const box=els.svg.getBoundingClientRect();const x=(e.clientX-box.left)*960/box.width;return x}
+  els.svg.addEventListener('pointerdown',e=>{const hit=e.target.closest('[data-drag]');if(!hit)return;dragging=hit.getAttribute('data-drag');els.svg.setPointerCapture(e.pointerId);e.preventDefault()});
+  els.svg.addEventListener('pointermove',e=>{if(!dragging)return;const x=pointerCm(e);if(dragging==='u')els.u.value=clamp(Math.round((X-x)/SCALE),8,75);else els.s.value=clamp(Math.round((x-X)/SCALE),8,90);hideHint();draw()});
+  els.svg.addEventListener('pointerup',()=>{dragging=null});els.svg.addEventListener('pointercancel',()=>{dragging=null});
+  
+window.labAdapter={
+ snapshot:()=>JSON.parse(JSON.stringify({...state(),records})),
+ restore:st=>{els.f.value=st.f;els.u.value=st.u;els.s.value=st.s;records=structuredClone(st.records||[]);draw();renderRecords()},
+ reset:()=>{els.f.value=15;els.u.value=45;els.s.value=22;records=[];draw();renderRecords()}
+};
+
+  draw();renderRecords();
+})();
+</script>
+</body>
+</html>

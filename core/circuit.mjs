@@ -1,0 +1,20 @@
+export function solveCircuit(components,wires){
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));const key=(id,p)=>id+':'+p;
+function solveLinear(matrix,rhs){const n=rhs.length,A=matrix.map((row,i)=>[...row,rhs[i]]);for(let k=0;k<n;k++){let pivot=k;for(let i=k+1;i<n;i++)if(Math.abs(A[i][k])>Math.abs(A[pivot][k]))pivot=i;if(Math.abs(A[pivot][k])<1e-11)return null;[A[k],A[pivot]]=[A[pivot],A[k]];let d=A[k][k];for(let j=k;j<=n;j++)A[k][j]/=d;for(let i=0;i<n;i++){if(i===k)continue;let m=A[i][k];if(!m)continue;for(let j=k;j<=n;j++)A[i][j]-=m*A[k][j]}}return A.map(row=>row[n])}
+function simulate(){
+const byId=new Map(components.map(c=>[c.id,c])),parent=new Map();for(const c of components)for(let p=0;p<2;p++)parent.set(key(c.id,p),key(c.id,p));
+function find(k){let r=parent.get(k);if(r!==k){r=find(r);parent.set(k,r)}return r}function union(a,b){let ra=find(a),rb=find(b);if(ra!==rb)parent.set(rb,ra)}
+for(const w of wires)if(byId.has(w.a.id)&&byId.has(w.b.id))union(key(w.a.id,w.a.port),key(w.b.id,w.b.port));
+for(const c of components)if(c.type==='switch'&&c.closed)union(key(c.id,0),key(c.id,1));
+const roots=[...new Set([...parent.keys()].map(find))],adj=new Map(roots.map(r=>[r,new Set()])),branches=[];let error='';
+for(const c of components){const a=find(key(c.id,0)),b=find(key(c.id,1));if(c.type==='switch')continue;if(c.type==='source'&&a===b&&c.value>0){error=`短路：${c.label}的正负极被导线或闭合开关直接连通。`;break}let branch={id:c.id,type:c.type,a,b};if(c.type==='source')branch.E=+c.value;else branch.R=c.type==='resistor'||c.type==='rheostat'||c.type==='lamp'?+c.value:c.type==='ammeter'?.01:1e6;branches.push(branch);if(a!==b){adj.get(a).add(b);adj.get(b).add(a)}}
+const nodeV=new Map(roots.map(r=>[r,0])),groupOf=new Map(),sourceI=new Map();if(!error){let visited=new Set(),groupIndex=0;for(const root of roots){if(visited.has(root))continue;let stack=[root],nodes=[];visited.add(root);while(stack.length){let v=stack.pop();nodes.push(v);groupOf.set(v,groupIndex);for(const n of adj.get(v))if(!visited.has(n)){visited.add(n);stack.push(n)}}groupIndex++;let groupBranches=branches.filter(b=>nodes.includes(b.a)&&nodes.includes(b.b)),sources=groupBranches.filter(b=>b.type==='source');if(!sources.length)continue;const ground=nodes[0],nlist=nodes.filter(n=>n!==ground),idx=new Map(nlist.map((n,i)=>[n,i])),N=nlist.length+sources.length,M=Array.from({length:N},()=>Array(N).fill(0)),z=Array(N).fill(0),nodeIndex=n=>n===ground?-1:idx.get(n);function stamp(i,j,v){if(i>=0&&j>=0)M[i][j]+=v}
+for(const b of groupBranches){if(b.type==='source'||b.a===b.b)continue;const G=1/b.R,i=nodeIndex(b.a),j=nodeIndex(b.b);stamp(i,i,G);stamp(j,j,G);stamp(i,j,-G);stamp(j,i,-G)}
+sources.forEach((b,k)=>{let q=nlist.length+k,i=nodeIndex(b.a),j=nodeIndex(b.b);stamp(i,q,1);stamp(j,q,-1);stamp(q,i,1);stamp(q,j,-1);z[q]=b.E});
+const ans=solveLinear(M,z);if(!ans){error='电路无法求解：请检查理想电源是否存在冲突或重复并联，或调整接线。';break}for(const n of nlist)nodeV.set(n,ans[idx.get(n)]);sources.forEach((b,k)=>sourceI.set(b.id,ans[nlist.length+k]));}}
+const readings=new Map();if(!error){for(const c of components){const a=find(key(c.id,0)),b=find(key(c.id,1));let signedU=nodeV.get(a)-nodeV.get(b),I=0,R=null;if(c.type==='switch'){signedU=c.closed?0:(groupOf.get(a)===groupOf.get(b)?signedU:null);I=null}else if(c.type==='source'){I=sourceI.get(c.id)??0}else{R=c.type==='resistor'||c.type==='rheostat'||c.type==='lamp'?+c.value:c.type==='ammeter'?.01:1e6;I=signedU/R}const U=signedU===null?null:Math.abs(signedU),absI=I===null?null:Math.abs(I),P=U===null||absI===null?null:U*absI;readings.set(c.id,{U,I:absI,R,P,signedU,signedI:I,brightness:c.type==='lamp'?clamp((P||0)/.9,0,1):null})}}
+const warnings=[];if(!error){for(const c of components){const r=readings.get(c.id);if(c.type==='source'&&r.I>3)warnings.push(`${c.label}输出电流超过 3 A，可能短路或过载`);if(c.type==='ammeter'&&r.I>.6)warnings.push(`${c.label}超过 0.6 A 量程`);if(c.type==='voltmeter'&&r.U>6)warnings.push(`${c.label}超过 6 V 量程`)}}
+return{readings,error,warnings,unsafe:!!error||warnings.length>0}}
+
+return simulate();
+}
